@@ -79,7 +79,7 @@ client.on("ready", async () => {
             status: "online",  // online, idle, dnd, invisible
         });
         client.user?.setActivity({
-            name: `[A] | ${client.ws.ping}ms | V${packageJSON.version}`,
+            name: `${client.ws.ping}ms | V${packageJSON.version}`,
             type: "STREAMING", // PLAYING, WATCHING, LISTENING, STREAMING
             url: "https://youtu.be/4hbf3eybAPk"
         });
