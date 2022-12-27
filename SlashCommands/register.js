@@ -28,12 +28,12 @@ for (const file of commandFiles) {
 
 
 const guildCommands = [];
-const guildCommandFiles = fs.readdirSync(join(__dirname, "/guildCommands")).filter(file => file.endsWith(".js"));
-for (const file of guildCommandFiles) {
-    const { default: guildCommand } = await import(`./guildCommands/${file}`);
-    if (!guildCommand) break;
-    guildCommands.push(guildCommand.data.toJSON());
-}
+// const guildCommandFiles = fs.readdirSync(join(__dirname, "/guildCommands")).filter(file => file.endsWith(".js"));
+// for (const file of guildCommandFiles) {
+//     const { default: guildCommand } = await import(`./guildCommands/${file}`);
+//     if (!guildCommand) break;
+//     guildCommands.push(guildCommand.data.toJSON());
+// }
 
 
 const rest = new REST({ version: "10" }).setToken(BOT_TOKEN);
