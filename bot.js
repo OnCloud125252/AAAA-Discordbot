@@ -74,16 +74,16 @@ client.on("messageCreate", message => {
 });
 
 client.on("ready", async () => {
-    setInterval(() => {
-        client.user?.setPresence({
-            status: "online",  // online, idle, dnd, invisible
-        });
-        client.user?.setActivity({
-            name: `${client.ws.ping}ms | V${packageJSON.version}`,
-            type: "STREAMING", // PLAYING, WATCHING, LISTENING, STREAMING
-            url: "https://youtu.be/4hbf3eybAPk"
-        });
-    }, 30000);
+    // setInterval(() => {
+    //     client.user?.setPresence({
+    //         status: "online",  // online, idle, dnd, invisible
+    //     });
+    //     client.user?.setActivity({
+    //         name: `${client.ws.ping}ms | V${packageJSON.version}`,
+    //         type: "STREAMING", // PLAYING, WATCHING, LISTENING, STREAMING
+    //         url: "https://youtu.be/4hbf3eybAPk"
+    //     });
+    // }, 30000);
 
     mongoose.set("strictQuery", false);
     const db = await mongoose.connect(process.env.MONGO_URI, { keepAlive: true });
