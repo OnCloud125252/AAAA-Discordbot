@@ -4,6 +4,9 @@
     "version": "4.7.0",
     "description": "",
     "main": "bot.js",
+    "engines": {
+        "node": ">=16 <18"
+    },
     "scripts": {
         "start": "node bot.js",
         "unregister": "node SlashCommands/unRegister.js",
