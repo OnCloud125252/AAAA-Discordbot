@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Partials, Collection } from "discord.js";
+import { Client, GatewayIntentBits, Partials, Collection, ActivityType } from "discord.js";
 import mongoose from "mongoose";
 import express from "express";
 import { readFileSync, readdirSync } from "fs";
@@ -70,21 +70,10 @@ client.on("interactionCreate", async interaction => {
 
 client.on("messageCreate", message => {
     if (message.author.bot) return;
-    message.channel.send(`Message ${message.author} send > \`${message.content}\``);
+    // message.channel.send(`Message ${message.author} send > \`${message.content}\``);
 });
 
 client.on("ready", async () => {
-    // setInterval(() => {
-    //     client.user?.setPresence({
-    //         status: "online",  // online, idle, dnd, invisible
-    //     });
-    //     client.user?.setActivity({
-    //         name: `${client.ws.ping}ms | V${packageJSON.version}`,
-    //         type: "STREAMING", // PLAYING, WATCHING, LISTENING, STREAMING
-    //         url: "https://youtu.be/4hbf3eybAPk"
-    //     });
-    // }, 30000);
-
     mongoose.set("strictQuery", false);
     const db = await mongoose.connect(process.env.MONGO_URI, { keepAlive: true });
     console.log(`Server : successfully connected to MongoDB, Database name: "${db.connections[0].name}"`);
@@ -100,6 +89,21 @@ client.on("ready", async () => {
     server.get("/ping", (_, res) => {
         res.status(200).json(`Service is up : ${readableTime(Math.round(performance.now()))["string"]}`);
     });
+
+    (function loop() {
+        client.user?.setPresence({
+            status: "online",  // online, idle, dnd, invisible
+
+            activities: [{
+                name: `/help | ${client.ws.ping}ms | V${packageJSON.version}`,
+                type: ActivityType.Listening,
+                url: "https://www.twitch.tv/yume1226"
+            }],
+        });
+        setTimeout(() => {
+            loop();
+        }, 10 * 1000);
+    })();
 });
 
 client.login(BOT_TOKEN);
