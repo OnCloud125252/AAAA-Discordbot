@@ -86,7 +86,7 @@ client.on("ready", async () => {
         console.log(`Bot : logged in as ${client.user.tag}`);
         console.log(`Server : client is on (took ${readableTime(Math.round(finishTime - startTime))["string"]})`);
     });
-    server.get("/ping", (_, res) => {
+    server.get("/", (_, res) => {
         res.status(200).json(`Service is up : ${readableTime(Math.round(performance.now()))["string"]}`);
     });
 
