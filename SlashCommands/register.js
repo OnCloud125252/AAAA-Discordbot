@@ -26,7 +26,6 @@ for (const file of commandFiles) {
     commands.push(command.data.toJSON());
 }
 
-
 const guildCommands = [];
 // const guildCommandFiles = fs.readdirSync(join(__dirname, "/guildCommands")).filter(file => file.endsWith(".js"));
 // for (const file of guildCommandFiles) {
