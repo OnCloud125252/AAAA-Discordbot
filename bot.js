@@ -51,26 +51,52 @@ for (const file of commandFiles) {
 }
 
 client.on("interactionCreate", async interaction => {
-    if (!interaction.isChatInputCommand()) return;
-
-    const command = interaction.client.commands.get(interaction.commandName);
-
-    if (!command) {
-        console.error(`Slash command : no command matching ${interaction.commandName} was found`);
-        return;
-    }
-
     try {
+        if (!interaction.isChatInputCommand()) return;
+
+        const command = interaction.client.commands.get(interaction.commandName);
+
+        if (!command) {
+            console.error(`Slash command : no command matching ${interaction.commandName} was found`);
+            return;
+        }
+        
         await command.execute(client, interaction, packageJSON.version);
     } catch (error) {
         console.error(error);
-        await interaction.reply({ content: "Slash command : there was an error while executing this command", ephemeral: true });
+        interaction.channel.send({
+            embeds: [{
+                color: parseInt("ff0000", 16),
+                title: "Error occurred",
+                fields: [
+                    {
+                        name: error.name,
+                        value: "```\n" + error.message + "\n```",
+                    },
+                ],
+                footer: {
+                    text: `Bot V ${packageJSON.version}`
+                },
+                timestamp: new Date(),
+            }]
+        });
     }
 });
 
 client.on("messageCreate", message => {
     if (message.author.bot) return;
-    // message.channel.send(`Message ${message.author} send > \`${message.content}\``);
+    if (message.content.startsWith("A ")) {
+        const command = message.content.toLowerCase().split(" ").slice(1).join(" ");
+        switch (message.content.toLowerCase()) {
+            case "a ping":
+            case "a botinfo":
+                message.reply(`:warning::warning::warning: WARNING :warning::warning::warning:\n\n> All commands are converted to slash command (\`/\`).\n> Please try to use \`/${command}\` instead!\n> For more information about slash command usage, please use \`/help\` command.`);
+                break;
+        }
+    }
+    else if (message.content.toLowerCase() === "kd") {
+        message.reply(`:warning::warning::warning: WARNING :warning::warning::warning:\n\n> All commands are converted to slash command (\`/\`).\n> Please try to use \`/${message.content.toLowerCase()}\` instead!\n> For more information about slash command usage, please use \`/help\` command.`);
+    }
 });
 
 client.on("ready", async () => {
@@ -96,8 +122,7 @@ client.on("ready", async () => {
 
             activities: [{
                 name: `/help | ${client.ws.ping}ms | V${packageJSON.version}`,
-                type: ActivityType.Listening,
-                url: "https://www.twitch.tv/yume1226"
+                type: ActivityType.Listening
             }],
         });
         setTimeout(() => {
