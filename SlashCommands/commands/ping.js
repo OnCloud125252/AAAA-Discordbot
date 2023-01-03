@@ -6,15 +6,23 @@ export default {
         .setName("ping")
         .setDescription("Replies with Pong and calculate latency"),
     async execute(client, interaction, version) {
-        const msg = await interaction.channel.send({
-            content: "Caculating ping . . .",
-            fetchReply: true
-        });
-
-        const networkLatency = msg.createdTimestamp - interaction.createdTimestamp;
-        const apiLatency = client.ws.ping;
+        const messageCreateTime = new Date().getTime();
 
         await interaction.reply({
+            embeds: [{
+                color: parseInt("ffff00", 16),
+                title: "Caculating ping . . .",
+                footer: {
+                    text: `Bot V ${version}`
+                },
+                timestamp: new Date(),
+            }]
+        });
+
+        const networkLatency = messageCreateTime - interaction.createdTimestamp;
+        const apiLatency = client.ws.ping;
+
+        await interaction.editReply({
             embeds: [{
                 color: parseInt("00FF00", 16),
                 title: "Pong 🏓",
@@ -36,7 +44,5 @@ export default {
                 timestamp: new Date(),
             }]
         });
-
-        await msg.delete();
     }
 };

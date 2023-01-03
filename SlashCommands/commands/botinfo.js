@@ -8,6 +8,8 @@ export default {
         .setName("botinfo")
         .setDescription("Show bot details"),
     async execute(client, interaction, version) {
+        const messageCreateTime = new Date().getTime();
+
         var content = "";
         switch (Math.floor(Math.random() * 2)) {
             case 0:
@@ -17,39 +19,46 @@ export default {
                 content = "看到這行的人可以獲得一罐雪碧 ฅ ^• ω •^ ฅ";
                 break;
         }
-        const msg = await interaction.channel.send({
-            content: content,
-            fetchReply: true
+        await interaction.reply({
+            embeds: [{
+                color: parseInt("ffff00", 16),
+                title: content,
+                footer: {
+                    text: `Bot V ${version}`
+                },
+                timestamp: new Date(),
+            }]
         });
 
-        const networkLatency = msg.createdTimestamp - interaction.createdTimestamp;
+        const networkLatency = messageCreateTime - interaction.createdTimestamp;
         const apiLatency = client.ws.ping;
         const latency = networkLatency + apiLatency;
+
         var emoji;
-        var emojitext;
+        var emojiDescription;
 
         switch (true) {
-            case (latency < 100):
+            case (latency < 300):
                 emoji = ":laughing:";
-                emojitext = "Very good !";
-                break;
-            case (latency < 500):
-                emoji = ":confused:";
-                emojitext = "Uh, A bit laggy ...";
+                emojiDescription = "Very good !";
                 break;
             case (latency < 1000):
+                emoji = ":confused:";
+                emojiDescription = "Uh, A bit laggy ...";
+                break;
+            case (latency < 2000):
                 emoji = ":confounded:";
-                emojitext = "It looks like we have a bad network connection ...";
+                emojiDescription = "It looks like we have a bad network connection ...";
                 break;
             default:
                 emoji = ":exploding_head:";
-                emojitext = "Oh my, it looks terrible !\n***Are you on the moon ?***";
+                emojiDescription = "Oh my, it looks terrible !\n***Are you on the moon ?***";
                 break;
         }
 
-        await interaction.reply({
+        await interaction.editReply({
             embeds: [{
-                color: parseInt("4169e1", 16),
+                color: parseInt("00FF00", 16),
                 title: "Bot info",
                 fields: [
                     {
@@ -64,7 +73,7 @@ export default {
                     },
                     {
                         name: `Rate : ${emoji}`,
-                        value: emojitext,
+                        value: emojiDescription,
                         inline: false
                     },
                     {
@@ -83,13 +92,8 @@ export default {
                         inline: false
                     }
                 ],
-                footer: {
-                    text: `Bot \`V ${version}\``
-                },
                 timestamp: new Date(),
             }]
         });
-
-        await msg.delete();
     }
 };
