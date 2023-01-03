@@ -1,6 +1,8 @@
 import axios from "axios";
 import { load } from "cheerio";
 
+import stringProgress from "../../stringProgress/index.js";
+
 
 export default async function getPlayerDetails(gameID) {
     try {
@@ -10,6 +12,10 @@ export default async function getPlayerDetails(gameID) {
             const $ = load(response.data);
             const gameName_long = $("head > title").text().toString();
             const gameName = gameName_long.substring(0, gameName_long.length - 14);
+            const level = $("body > div.mainContent > div.page-banner-container > div > span").text().replace(/Lvl /g, "");
+            const levelProgress = Number($("body > div.mainContent > div.feature > div > div > div.progressContainer > div.progress > div > span").text().replace(/%/g, ""));
+            const levelProgressBar = new stringProgress(100, levelProgress).filledBar()["bar"];
+            const squad = $("body > div.mainContent > div.page-banner-container > div").text().replace(gameName, "").replace(`Lvl ${level}`, "").replace(/[[ \]\n]/g, "");
             const kills = Number($("#player-details-summary-grid > div:nth-child(2) > div.player-details-number-box-value").text().replace(/,/g, "").replace(/\n/g, "").replace(/ /g, ""));
             const deaths = Number($("#player-details-summary-grid > div:nth-child(3) > div.player-details-number-box-value").text().replace(/,/g, "").replace(/\n/g, "").replace(/ /g, ""));
             const currentKD = (kills / deaths);
@@ -25,6 +31,10 @@ export default async function getPlayerDetails(gameID) {
                 gameID,
                 gameName_long,
                 gameName,
+                squad,
+                level,
+                levelProgress,
+                levelProgressBar,
                 kills,
                 deaths,
                 currentKD,
