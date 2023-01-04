@@ -62,32 +62,32 @@ export default {
                 title: "Bot info",
                 fields: [
                     {
-                        name: "API Latency :",
+                        name: "API Latency",
                         value: `\`${apiLatency} ms\``,
                         inline: true
                     },
                     {
-                        name: "Network Latency :",
+                        name: "Network Latency",
                         value: `\`${networkLatency} ms\``,
                         inline: true
                     },
                     {
-                        name: `Rate : ${emoji}`,
+                        name: `Rate ${emoji}`,
                         value: emojiDescription,
                         inline: false
                     },
                     {
-                        name: "Uptime :",
+                        name: "Uptime",
                         value: `\`${readableTime(client.uptime)["string"]}\``,
                         inline: true
                     },
                     {
-                        name: "Start time :",
+                        name: "Start time",
                         value: `\`${client.readyAt.toLocaleString("zh-TW", { timeZone: "Asia/Taipei" })} (GMT+8)\``,
                         inline: true
                     },
                     {
-                        name: "Version :",
+                        name: "Version",
                         value: `\`V ${version}\``,
                         inline: false
                     }

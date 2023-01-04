@@ -28,12 +28,12 @@ export default {
                 title: "Pong 🏓",
                 fields: [
                     {
-                        name: "API latency :",
+                        name: "API latency",
                         value: `\`${apiLatency} ms\``,
                         inline: true
                     },
                     {
-                        name: "Network Latency :",
+                        name: "Network Latency",
                         value: `\`${networkLatency} ms\``,
                         inline: true
                     }

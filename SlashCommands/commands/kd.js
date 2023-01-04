@@ -8,6 +8,7 @@ const manager = new WBmanager();
 export default {
     data: new SlashCommandBuilder()
         .setName("kd")
+        .setDescription("Display Warbrokers KD data for user")
         .addUserOption(option =>
             option
                 .setName("target")
@@ -19,8 +20,7 @@ export default {
                 .setName("visible")
                 .setDescription("Response message visibility, default is true")
                 .setRequired(false)
-        )
-        .setDescription("Display Warbrokers KD data for user"),
+        ),
     async execute(client, interaction, version) {
         const authorID = interaction.options.getUser("target")?.id ?? interaction.user.id;
         const responseMessageVisibility = !(interaction.options.getBoolean("visible") ?? true);
@@ -59,8 +59,8 @@ export default {
                             inline: true
                         },
                         {
-                            name: "目前狀況 :",
-                            value: `總擊殺次數 = \`${playerDetailsObj.kills}\`\n總死亡次數 = \`${playerDetailsObj.deaths}\``,
+                            name: "目前狀況",
+                            value: `總擊殺次數 : \`${playerDetailsObj.kills}\`\n總死亡次數 : \`${playerDetailsObj.deaths}\``,
                         },
                         {
                             name: `等級 : ${playerDetailsObj.level}`,
