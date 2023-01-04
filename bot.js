@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Partials, Collection, ActivityType } from "discord.js";
+import { Client, GatewayIntentBits, Partials, Collection, ActivityType, ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 import mongoose from "mongoose";
 import express from "express";
 import { readFileSync, readdirSync } from "fs";
@@ -50,7 +50,40 @@ for (const file of commandFiles) {
     }
 }
 
+
+
 client.on("interactionCreate", async interaction => {
+    process.on("uncaughtException", (error) => {
+        console.error(error);
+        client.channels.cache.get("1060304066707722281").send({
+            embeds: [{
+                color: parseInt("ff0000", 16),
+                title: "Error occurred",
+                fields: [
+                    {
+                        name: "Guild ID",
+                        value: `\`${interaction.guildId}\``,
+                        inline: true
+                    },
+                    {
+                        name: "Channel ID",
+                        value: `\`${interaction.channelId}\``,
+                        inline: true
+                    },
+                    {
+                        name: "Full error",
+                        value: "```\n" + error + "\n```",
+                        inline: false
+                    },
+                ],
+                footer: {
+                    text: `Bot V ${packageJSON.version}`
+                },
+                timestamp: new Date(),
+            }]
+        });
+    });
+
     try {
         if (!interaction.isChatInputCommand()) return;
 
@@ -60,10 +93,46 @@ client.on("interactionCreate", async interaction => {
             console.error(`Slash command : no command matching ${interaction.commandName} was found`);
             return;
         }
-        
+
         await command.execute(client, interaction, packageJSON.version);
     } catch (error) {
         console.error(error);
+        client.channels.cache.get("1060304066707722281").send({
+            embeds: [{
+                color: parseInt("ff0000", 16),
+                title: "Error occurred",
+                fields: [
+                    {
+                        name: "Guild ID",
+                        value: `\`${interaction.guildId}\``,
+                        inline: true
+                    },
+                    {
+                        name: "Channel ID",
+                        value: `\`${interaction.channelId}\``,
+                        inline: true
+                    },
+                    {
+                        name: "Full error",
+                        value: "```\n" + error + "\n```",
+                        inline: false
+                    },
+                ],
+                footer: {
+                    text: `Bot V ${packageJSON.version}`
+                },
+                timestamp: new Date(),
+            }]
+        });
+
+        const contactRow = new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                    .setLabel("Send admin a message")
+                    .setURL("https://discord.com/users/755269122597585018")
+                    .setStyle(ButtonStyle.Link)
+            );
+
         interaction.channel.send({
             embeds: [{
                 color: parseInt("ff0000", 16),
@@ -78,7 +147,8 @@ client.on("interactionCreate", async interaction => {
                     text: `Bot V ${packageJSON.version}`
                 },
                 timestamp: new Date(),
-            }]
+            }],
+            components: [contactRow]
         });
     }
 });
