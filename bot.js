@@ -50,8 +50,6 @@ for (const file of commandFiles) {
     }
 }
 
-
-
 client.on("interactionCreate", async interaction => {
     process.on("uncaughtException", (error) => {
         console.error(error);

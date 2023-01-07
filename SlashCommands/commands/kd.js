@@ -18,12 +18,12 @@ export default {
         .addBooleanOption(option =>
             option
                 .setName("visible")
-                .setDescription("Response message visibility, default is true")
+                .setDescription("Response message visibility, default is false")
                 .setRequired(false)
         ),
     async execute(client, interaction, version) {
         const authorID = interaction.options.getUser("target")?.id ?? interaction.user.id;
-        const responseMessageVisibility = !(interaction.options.getBoolean("visible") ?? true);
+        const responseMessageVisibility = !(interaction.options.getBoolean("visible") ?? false);
 
         await interaction.reply({
             embeds: [{
