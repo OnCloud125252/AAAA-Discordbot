@@ -8,7 +8,7 @@ import * as dotenv from "dotenv";
 
 import registerSlashCommands from "./SlashCommands/register.js";
 import readableTime from "./_modules/readableTime/index.js";
-
+import uuid from "./_modules/uuid/uuid.js";
 
 const startTime = performance.now();
 
@@ -51,34 +51,20 @@ for (const file of commandFiles) {
 }
 
 client.on("interactionCreate", async interaction => {
+    const errorUUID = uuid();
+    console.log(interaction.commandName + interaction.options._subcommand + interaction.options._hoistedOptions);
+
     process.on("uncaughtException", (error) => {
         console.error(error);
-        client.channels.cache.get("1060304066707722281").send({
-            embeds: [{
-                color: parseInt("ff0000", 16),
-                title: "Error occurred",
-                fields: [
-                    {
-                        name: "Guild ID",
-                        value: `\`${interaction.guildId}\``,
-                        inline: true
-                    },
-                    {
-                        name: "Channel ID",
-                        value: `\`${interaction.channelId}\``,
-                        inline: true
-                    },
-                    {
-                        name: "Full error",
-                        value: "```\n" + error + "\n```",
-                        inline: false
-                    },
-                ],
-                footer: {
-                    text: `Bot V ${packageJSON.version}`
-                },
-                timestamp: new Date(),
-            }]
+        logErrorToDiscord(errorUUID, {
+            client,
+            interaction,
+            error,
+            command: {
+                name: interaction.commandName,
+                subcommand: interaction.options._subcommand,
+                options: interaction.options._hoistedOptions.map(option => { return { name: option.name, value: option.value }; })
+            }
         });
     });
 
@@ -95,50 +81,39 @@ client.on("interactionCreate", async interaction => {
         await command.execute(client, interaction, packageJSON.version);
     } catch (error) {
         console.error(error);
-        client.channels.cache.get("1060304066707722281").send({
-            embeds: [{
-                color: parseInt("ff0000", 16),
-                title: "Error occurred",
-                fields: [
-                    {
-                        name: "Guild ID",
-                        value: `\`${interaction.guildId}\``,
-                        inline: true
-                    },
-                    {
-                        name: "Channel ID",
-                        value: `\`${interaction.channelId}\``,
-                        inline: true
-                    },
-                    {
-                        name: "Full error",
-                        value: "```\n" + error + "\n```",
-                        inline: false
-                    },
-                ],
-                footer: {
-                    text: `Bot V ${packageJSON.version}`
-                },
-                timestamp: new Date(),
-            }]
+        logErrorToDiscord(errorUUID, {
+            client,
+            interaction,
+            error,
+            command: {
+                name: interaction.commandName,
+                subcommand: interaction.options._subcommand,
+                options: interaction.options._hoistedOptions.map(option => { return { name: option.name, value: option.value }; })
+            }
         });
 
         const contactRow = new ActionRowBuilder()
             .addComponents(
                 new ButtonBuilder()
-                    .setLabel("Send admin a message")
+                    .setLabel("Report error to admin")
                     .setURL("https://discord.com/users/755269122597585018")
                     .setStyle(ButtonStyle.Link)
             );
-
-        interaction.channel.send({
+        await interaction.channel.send({
             embeds: [{
                 color: parseInt("ff0000", 16),
                 title: "Error occurred",
+                description: "Please copy and paste the following information to admin :",
                 fields: [
                     {
-                        name: error.name,
-                        value: "```\n" + error.message + "\n```",
+                        name: "1. Error ID",
+                        value: `\`${errorUUID}\``,
+                        inline: false
+                    },
+                    {
+                        name: "2. The screenshot of the command(s)",
+                        value: "(insert the screenshot)",
+                        inline: false
                     },
                 ],
                 footer: {
@@ -200,3 +175,76 @@ client.on("ready", async () => {
 });
 
 client.login(BOT_TOKEN);
+
+function logErrorToDiscord(errorUUID, errorObject) {
+    const { client, interaction, error, command } = errorObject;
+
+    client.channels.cache.get(process.env.LOG_CHANNEL).send({
+        content: `<@755269122597585018>\nThere's an error occurred in guild \`${interaction.guild.name}\``,
+        embeds: [{
+            color: parseInt("ff0000", 16),
+            title: `Error \`${errorUUID}\``,
+            fields: [
+                {
+                    name: "\u200b",
+                    value: "**Guild**",
+                    inline: false
+                },
+                {
+                    name: "Name",
+                    value: `\`${interaction.guild.name}\``,
+                    inline: true
+                },
+                {
+                    name: "ID",
+                    value: `\`${interaction.guildId}\``,
+                    inline: true
+                },
+                {
+                    name: "\u200b",
+                    value: "**Channel**",
+                    inline: false
+                },
+                {
+                    name: "Name",
+                    value: `\`${interaction.channel.name}\``,
+                    inline: true
+                },
+                {
+                    name: "ID",
+                    value: `\`${interaction.channelId}\``,
+                    inline: true
+                },
+                {
+                    name: "\u200b",
+                    value: "**Command**",
+                    inline: false
+                },
+                {
+                    name: "Name",
+                    value: "```\n" + command.name + "\n```",
+                    inline: true
+                },
+                (command.subcommand ? {
+                    name: "Subcommand",
+                    value: "```\n" + command.subcommand + "\n```",
+                    inline: true
+                } : null),
+                (command.options[0] ? {
+                    name: "Options",
+                    value: "```\n" + command.options.map(option => JSON.stringify(option, null, 4)).join(",\n") + "\n```",
+                    inline: true
+                } : null),
+                {
+                    name: "Full error",
+                    value: "```\n" + error + "\n```",
+                    inline: false
+                },
+            ].filter(obj => obj),
+            footer: {
+                text: `Bot V ${packageJSON.version}`
+            },
+            timestamp: new Date(),
+        }]
+    });
+}
