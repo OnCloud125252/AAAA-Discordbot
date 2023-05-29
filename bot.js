@@ -9,6 +9,7 @@ import * as dotenv from "dotenv";
 import registerSlashCommands from "./SlashCommands/register.js";
 import readableTime from "./_modules/readableTime/index.js";
 import uuid from "./_modules/uuid/uuid.js";
+import contentHandler from "./Contents/handler.js";
 
 const startTime = performance.now();
 
@@ -126,21 +127,7 @@ client.on("interactionCreate", async interaction => {
     }
 });
 
-client.on("messageCreate", message => {
-    if (message.author.bot) return;
-    if (message.content.startsWith("A ")) {
-        const command = message.content.toLowerCase().split(" ").slice(1).join(" ");
-        switch (message.content.toLowerCase()) {
-            case "a ping":
-            case "a botinfo":
-                message.reply(`:warning::warning::warning: WARNING :warning::warning::warning:\n\n> All commands are converted to slash command (\`/\`).\n> Please try to use \`/${command}\` instead!\n> For more information about slash command usage, please use \`/help\` command.`);
-                break;
-        }
-    }
-    else if (message.content.toLowerCase() === "kd") {
-        message.reply(`:warning::warning::warning: WARNING :warning::warning::warning:\n\n> All commands are converted to slash command (\`/\`).\n> Please try to use \`/${message.content.toLowerCase()}\` instead!\n> For more information about slash command usage, please use \`/help\` command.`);
-    }
-});
+client.on("messageCreate", contentHandler);
 
 client.on("ready", async () => {
     mongoose.set("strictQuery", false);
