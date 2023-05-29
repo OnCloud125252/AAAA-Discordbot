@@ -10,3 +10,13 @@ const gameID = new Schema({
 });
 
 export const schema_gameID = mongoose.model("gameID", gameID, "gameIDs");
+
+const chat = new Schema({
+    chatID: String,
+    title: String,
+    messages: Array,
+    createTime: Date,
+    updateTime: Date
+});
+
+export const schema_chat = mongoose.model("chat", chat, "chats");
