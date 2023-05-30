@@ -1,7 +1,7 @@
 {
     "type": "module",
     "name": "aaaa-discordbot",
-    "version": "4.7.2",
+    "version": "4.8.0",
     "description": "",
     "main": "bot.js",
     "scripts": {
