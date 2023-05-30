@@ -37,7 +37,7 @@ export default {
 
             const ipinfoResponse = await axios.get(`https://ipinfo.io/${ipAddress}`, {
                 params: {
-                    token: process.env.IPINFO_TOKEN
+                    token: (process.env.DEV ? process.env.DEV_IPINFO_TOKEN : process.env.IPINFO_TOKEN)
                 }
             });
 
@@ -65,7 +65,7 @@ export default {
                         marker: `center:${ipinfoResponse.data.loc}|icon:https://i.ibb.co/GF7SFHj/map-marker-128.png|shadow:false`
                     },
                     headers: {
-                        "X-RapidAPI-Key": process.env.X_RapidAPI_Key,
+                        "X-RapidAPI-Key": (process.env.DEV ? process.env.DEV_X_RapidAPI_Key : process.env.X_RapidAPI_Key),
                         "X-RapidAPI-Host": "maptoolkit.p.rapidapi.com"
                     },
                     responseType: "arraybuffer"
@@ -131,7 +131,7 @@ export default {
             await interaction.reply({
                 embeds: [{
                     color: parseInt("ff0000", 16),
-                    title: `IP address \`${ipAddress.replace(/`/g,"\\`")}\` is invalid `,
+                    title: `IP address \`${ipAddress.replace(/`/g, "\\`")}\` is invalid `,
                     footer: {
                         text: `Bot V ${version}`
                     },

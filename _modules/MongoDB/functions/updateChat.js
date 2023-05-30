@@ -11,19 +11,18 @@ export default async function updateChat(chatID, title, message) {
             if (title) {
                 existingChat.title = title;
             }
-            existingChat.messages.push(message);
+            existingChat.messages.push(...message);
             existingChat.updateTime = new Date();
 
             chatToUpdate = existingChat;
 
             await existingChat.save();
-            console.log("Chat record updated successfully.");
         }
         else {
             const newChat = new schema_chat({
                 chatID: chatID,
                 title: "New Chat",
-                messages: [message],
+                messages: [...message],
                 createTime: new Date(),
                 updateTime: new Date(),
             });
@@ -31,7 +30,6 @@ export default async function updateChat(chatID, title, message) {
             chatToUpdate = newChat;
 
             await newChat.save();
-            console.log("Chat record created successfully.");
         }
 
         return chatToUpdate;

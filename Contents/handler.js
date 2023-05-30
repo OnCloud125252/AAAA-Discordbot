@@ -15,7 +15,7 @@ export default function contentHandler(message) {
             break;
         }
 
-        case ((message.channel.type === ChannelType.PublicThread && message.channel.parent?.type === ChannelType.GuildForum) && message.channel.parentId === process.env.CHAT_CHANNEL): {
+        case ((message.channel.type === ChannelType.PublicThread && message.channel.parent?.type === ChannelType.GuildForum) && message.channel.parentId === (process.env.DEV ? process.env.DEV_CHAT_CHANNEL : process.env.CHAT_CHANNEL)): {
             chat(message);
             break;
         }
