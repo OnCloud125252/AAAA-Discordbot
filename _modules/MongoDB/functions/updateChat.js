@@ -3,6 +3,8 @@ import { schema_chat } from "./_schema.js";
 
 export default async function updateChat(chatID, title, message) {
     try {
+        let chatToUpdate = null;
+
         const existingChat = await schema_chat.findOne({ chatID: chatID });
 
         if (existingChat) {
@@ -12,6 +14,8 @@ export default async function updateChat(chatID, title, message) {
             existingChat.messages.push(message);
             existingChat.updateTime = new Date();
 
+            chatToUpdate = existingChat;
+
             await existingChat.save();
             console.log("Chat record updated successfully.");
         }
@@ -19,16 +23,20 @@ export default async function updateChat(chatID, title, message) {
             const newChat = new schema_chat({
                 chatID: chatID,
                 title: "New Chat",
-                messages: [],
+                messages: [message],
                 createTime: new Date(),
                 updateTime: new Date(),
             });
 
+            chatToUpdate = newChat;
+
             await newChat.save();
             console.log("Chat record created successfully.");
         }
+
+        return chatToUpdate;
     }
     catch (error) {
-        console.error("An error occurred while updating or creating the chat record:", error);
+        throw new Error("An error occurred while updating or creating the chat record");
     }
 }
