@@ -17,13 +17,13 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const server = express();
-const host = process.env.HOST || "localhost";
-const port = process.env.PORT || 3000;
+const host = (process.env.DEV ? process.env.DEV_HOST : process.env.HOST) || "localhost";
+const port = (process.env.DEV ? process.env.DEV_PORT : process.env.PORT) || 3000;
 
 const packageJSON = JSON.parse(readFileSync("./package.json"));
 
-if (!process.env.BOT_TOKEN) throw Error("Server : \"BOT_TOKEN\" not found in environment variable");
-const BOT_TOKEN = process.env.BOT_TOKEN;
+if (!(process.env.DEV ? process.env.DEV_BOT_TOKEN : process.env.BOT_TOKEN)) throw Error("Server : \"BOT_TOKEN\" not found in environment variable");
+const BOT_TOKEN = (process.env.DEV ? process.env.DEV_BOT_TOKEN : process.env.BOT_TOKEN);
 
 await registerSlashCommands();
 
@@ -131,7 +131,7 @@ client.on("messageCreate", contentHandler);
 
 client.on("ready", async () => {
     mongoose.set("strictQuery", false);
-    const db = await mongoose.connect(process.env.MONGO_URI, { keepAlive: true });
+    const db = await mongoose.connect((process.env.DEV ? process.env.DEV_MONGO_URI : process.env.MONGO_URI), { keepAlive: true });
     console.log(`Server : successfully connected to MongoDB, Database name: "${db.connections[0].name}"`);
 
     server.set("port", port);
@@ -166,7 +166,7 @@ client.login(BOT_TOKEN);
 function logErrorToDiscord(errorUUID, errorObject) {
     const { client, interaction, error, command } = errorObject;
 
-    client.channels.cache.get(process.env.LOG_CHANNEL).send({
+    client.channels.cache.get((process.env.DEV ? process.env.DEV_LOG_CHANNEL : process.env.LOG_CHANNEL)).send({
         content: `<@755269122597585018>\nThere's an error occurred in guild \`${interaction.guild.name}\``,
         embeds: [{
             color: parseInt("ff0000", 16),

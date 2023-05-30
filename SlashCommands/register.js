@@ -9,13 +9,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config();
 
-if (!process.env.BOT_TOKEN) throw Error("registerSlashCommands : \"BOT_TOKEN\" not found in environment variable");
-if (!process.env.CLIENT_ID) throw Error("registerSlashCommands : \"CLIENT_ID\" not found in environment variable");
-if (!process.env.GUILD_ID) throw Error("registerSlashCommands : \"GUILD_ID\" not found in environment variable");
+if (!(process.env.DEV ? process.env.DEV_BOT_TOKEN : process.env.BOT_TOKEN)) throw Error("registerSlashCommands : \"BOT_TOKEN\" not found in environment variable");
+if (!(process.env.DEV ? process.env.DEV_CLIENT_ID : process.env.CLIENT_ID)) throw Error("registerSlashCommands : \"CLIENT_ID\" not found in environment variable");
+if (!(process.env.DEV ? process.env.DEV_GUILD_ID : process.env.GUILD_ID)) throw Error("registerSlashCommands : \"GUILD_ID\" not found in environment variable");
 
-const BOT_TOKEN = process.env.BOT_TOKEN;
-const CLIENT_ID = process.env.CLIENT_ID;
-const GUILD_ID = process.env.GUILD_ID || null;
+const BOT_TOKEN = (process.env.DEV ? process.env.DEV_BOT_TOKEN : process.env.BOT_TOKEN);
+const CLIENT_ID = (process.env.DEV ? process.env.DEV_CLIENT_ID : process.env.CLIENT_ID);
+const GUILD_ID = (process.env.DEV ? process.env.DEV_GUILD_ID : process.env.GUILD_ID) || null;
 
 
 const commands = [];
