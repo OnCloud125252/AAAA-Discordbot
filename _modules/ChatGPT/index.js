@@ -11,7 +11,8 @@ export default async function requestChat(messages) {
         url: openAi,
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${openAiKey}`
+            "Authorization": `Bearer ${openAiKey}`,
+            "Accept-Encoding": "gzip,deflate,compress"
         },
         data: {
             "model": "gpt-3.5-turbo",
