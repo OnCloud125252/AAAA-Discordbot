@@ -4,13 +4,13 @@ import chat from "./services/chat.js";
 import warning from "./services/warning.js";
 
 
-export default function contentHandler(message) {
+export default function MessageCreateHandler(message) {
     if (message.author.bot) return;
 
     const content = message.content;
 
     switch (true) {
-        case (content.startsWith("A ") && (content.toLowerCase() === "a ping" || content.toLowerCase() === "a botinfo" || content.toLowerCase() === "kd")): {
+        case (content.toLowerCase() === "kd" || content.startsWith("A ") && (content.toLowerCase() === "a ping" || content.toLowerCase() === "a botinfo")): {
             warning(message);
             break;
         }
@@ -21,7 +21,6 @@ export default function contentHandler(message) {
         }
 
         default: {
-            console.log("No action");
             break;
         }
     }

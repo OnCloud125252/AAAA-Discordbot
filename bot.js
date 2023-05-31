@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Partials, Collection, ActivityType, ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
+import { Client, GatewayIntentBits, Partials, Collection, ActivityType } from "discord.js";
 import mongoose from "mongoose";
 import express from "express";
 import { readFileSync, readdirSync } from "fs";
@@ -8,8 +8,10 @@ import * as dotenv from "dotenv";
 
 import registerSlashCommands from "./SlashCommands/register.js";
 import readableTime from "./_modules/readableTime/index.js";
-import uuid from "./_modules/uuid/uuid.js";
-import contentHandler from "./Contents/handler.js";
+import InteractionCreateHandler from "./events/InteractionCreate/handler.js";
+import MessageCreateHandler from "./events/MessageCreate/handler.js";
+import ChannelDeleteHandler from "./events/ChannelDelete/handler.js";
+import ThreadDeleteHanhler from "./events/ThreadDelete/handler.js";
 
 const startTime = performance.now();
 
@@ -51,83 +53,10 @@ for (const file of commandFiles) {
     }
 }
 
-client.on("interactionCreate", async interaction => {
-    const errorUUID = uuid();
-    console.log(interaction.commandName + interaction.options._subcommand + interaction.options._hoistedOptions);
-
-    process.on("uncaughtException", (error) => {
-        console.error(error);
-        logErrorToDiscord(errorUUID, {
-            client,
-            interaction,
-            error,
-            command: {
-                name: interaction.commandName,
-                subcommand: interaction.options._subcommand,
-                options: interaction.options._hoistedOptions.map(option => { return { name: option.name, value: option.value }; })
-            }
-        });
-    });
-
-    try {
-        if (!interaction.isChatInputCommand()) return;
-
-        const command = interaction.client.commands.get(interaction.commandName);
-
-        if (!command) {
-            console.error(`Slash command : no command matching ${interaction.commandName} was found`);
-            return;
-        }
-
-        await command.execute(client, interaction, packageJSON.version);
-    } catch (error) {
-        console.error(error);
-        logErrorToDiscord(errorUUID, {
-            client,
-            interaction,
-            error,
-            command: {
-                name: interaction.commandName,
-                subcommand: interaction.options._subcommand,
-                options: interaction.options._hoistedOptions.map(option => { return { name: option.name, value: option.value }; })
-            }
-        });
-
-        const contactRow = new ActionRowBuilder()
-            .addComponents(
-                new ButtonBuilder()
-                    .setLabel("Report error to admin")
-                    .setURL("https://discord.com/users/755269122597585018")
-                    .setStyle(ButtonStyle.Link)
-            );
-        await interaction.channel.send({
-            embeds: [{
-                color: parseInt("ff0000", 16),
-                title: "Error occurred",
-                description: "Please copy and paste the following information to admin :",
-                fields: [
-                    {
-                        name: "1. Error ID",
-                        value: `\`${errorUUID}\``,
-                        inline: false
-                    },
-                    {
-                        name: "2. The screenshot of the command(s)",
-                        value: "(insert the screenshot)",
-                        inline: false
-                    },
-                ],
-                footer: {
-                    text: `Bot V ${packageJSON.version}`
-                },
-                timestamp: new Date(),
-            }],
-            components: [contactRow]
-        });
-    }
-});
-
-client.on("messageCreate", contentHandler);
+client.on("interactionCreate", interaction => InteractionCreateHandler(client, interaction));
+client.on("messageCreate", message => MessageCreateHandler(message));
+client.on("channelDelete", channel => ChannelDeleteHandler(channel));
+client.on("threadDelete", thread => ThreadDeleteHanhler(thread));
 
 client.on("ready", async () => {
     mongoose.set("strictQuery", false);
@@ -162,76 +91,3 @@ client.on("ready", async () => {
 });
 
 client.login(BOT_TOKEN);
-
-function logErrorToDiscord(errorUUID, errorObject) {
-    const { client, interaction, error, command } = errorObject;
-
-    client.channels.cache.get((process.env.DEV ? process.env.DEV_LOG_CHANNEL : process.env.LOG_CHANNEL)).send({
-        content: `<@755269122597585018>\nThere's an error occurred in guild \`${interaction.guild.name}\``,
-        embeds: [{
-            color: parseInt("ff0000", 16),
-            title: `Error \`${errorUUID}\``,
-            fields: [
-                {
-                    name: "\u200b",
-                    value: "**Guild**",
-                    inline: false
-                },
-                {
-                    name: "Name",
-                    value: `\`${interaction.guild.name}\``,
-                    inline: true
-                },
-                {
-                    name: "ID",
-                    value: `\`${interaction.guildId}\``,
-                    inline: true
-                },
-                {
-                    name: "\u200b",
-                    value: "**Channel**",
-                    inline: false
-                },
-                {
-                    name: "Name",
-                    value: `\`${interaction.channel.name}\``,
-                    inline: true
-                },
-                {
-                    name: "ID",
-                    value: `\`${interaction.channelId}\``,
-                    inline: true
-                },
-                {
-                    name: "\u200b",
-                    value: "**Command**",
-                    inline: false
-                },
-                {
-                    name: "Name",
-                    value: "```\n" + command.name + "\n```",
-                    inline: true
-                },
-                (command.subcommand ? {
-                    name: "Subcommand",
-                    value: "```\n" + command.subcommand + "\n```",
-                    inline: true
-                } : null),
-                (command.options[0] ? {
-                    name: "Options",
-                    value: "```\n" + command.options.map(option => JSON.stringify(option, null, 4)).join(",\n") + "\n```",
-                    inline: true
-                } : null),
-                {
-                    name: "Full error",
-                    value: "```\n" + error + "\n```",
-                    inline: false
-                },
-            ].filter(obj => obj),
-            footer: {
-                text: `Bot V ${packageJSON.version}`
-            },
-            timestamp: new Date(),
-        }]
-    });
-}
