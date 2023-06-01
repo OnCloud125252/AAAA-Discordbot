@@ -17,16 +17,16 @@ export default async function chat(message) {
         };
 
         const title = await (async () => {
-            console.log(oldMessageObj.messages.length);
             if (oldMessageObj.messages.length === 2) {
-                console.log("get title");
                 const oldMessages = JSON.parse(JSON.stringify(oldMessageObj.messages));
                 oldMessages.push({
                     role: "user",
                     name: message.author.username.replace(/[^a-zA-Z0-9_]/g, ""),
-                    content: message.content + "\n\nGenerate a title for our conversation in one sentence. Please reply with only the title."
+                    content: message.content + "\n\nGenerate a title for our conversation in one sentence. Please reply with only the title. Please do not wrap the title with any kind of brackets."
                 });
-                return (await requestChat(oldMessages)).choices[0].message.content;
+                const chatTitle = (await requestChat(oldMessages)).choices[0].message.content;
+                await message.channel.setName(chatTitle);
+                return chatTitle;
             }
             else {
                 return null;
