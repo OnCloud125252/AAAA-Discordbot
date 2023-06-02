@@ -29,11 +29,11 @@ export default {
         try {
             guildObj = await readGuild(interaction.guild.id);
             if (!guildObj.chatChannelID) {
-                await await interaction.reply("Please config the chat channel first using </config chat:1114085752410738749> command.");
+                await await interaction.reply("Please config the chat channel first using </config chat:1114143236789915768> command.");
                 return;
             }
         } catch (error) {
-            await await interaction.reply("Please config the chat channel first using </config chat:1114085752410738749> command.");
+            await await interaction.reply("Please config the chat channel first using </config chat:1114143236789915768> command.");
             return;
         }
 
@@ -47,15 +47,27 @@ export default {
                     message: {
                         embeds: [{
                             color: parseInt("036bfc", 16),
-                            title: "You may now chat with ChatGPT",
+                            title: "***You may now chat with ChatGPT***",
                             fields: [
                                 {
                                     name: "Important:",
-                                    value: "All your conversation will be stored in database until you delete this chat."
+                                    value: "All your conversation will be stored in database until you delete this chat.",
+                                    inline: false
+                                },
+                                {
+                                    name: `System ${interaction.options.getString("prompt") ? "(Custom)" : "(Default)"}:`,
+                                    value: interaction.options.getString("prompt") ?? "You are an helpful assistant. Your name is AAAA. You should remember everyone's name. You can response in Discord Markdown format. If you understand, do not reply that you understand, please reply with a creative short greeting.",
+                                    inline: false
                                 },
                                 {
                                     name: "Module:",
-                                    value: "gpt-3.5-turbo"
+                                    value: "`gpt-3.5-turbo`",
+                                    inline: true
+                                },
+                                {
+                                    name: "Ttemperature:",
+                                    value: "`0.7`",
+                                    inline: true
                                 }
                             ],
                             thumbnail: {
