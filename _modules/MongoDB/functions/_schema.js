@@ -8,7 +8,6 @@ const gameID = new Schema({
     gameID: String,
     kdData: Object,
 });
-
 export const schema_gameID = mongoose.model("gameID", gameID, "gameIDs");
 
 const chat = new Schema({
@@ -18,5 +17,10 @@ const chat = new Schema({
     createTime: Date,
     updateTime: Date
 });
-
 export const schema_chat = mongoose.model("chat", chat, "chats");
+
+const guild = new Schema({
+    guildID: String,
+    chatChannelID: String
+});
+export const schema_guild = mongoose.model("guild", guild, "guilds");

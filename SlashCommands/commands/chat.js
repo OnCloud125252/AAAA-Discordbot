@@ -1,8 +1,9 @@
-import { SlashCommandBuilder, ChannelType } from "discord.js";
+import { SlashCommandBuilder, ChannelType, PermissionFlagsBits } from "discord.js";
 
 import requestChat from "../../_modules/ChatGPT/index.js";
-import updateChat from "../../_modules/MongoDB/functions/updateChat.js";
-import deleteChat from "../../_modules/MongoDB/functions/deleteChat.js";
+import updateChat from "../../_modules/MongoDB/functions/chat/update.js";
+import deleteChat from "../../_modules/MongoDB/functions/chat/delete.js";
+import readGuild from "../../_modules/MongoDB/functions/guild/read.js";
 
 
 export default {
@@ -14,16 +15,33 @@ export default {
             .setDescription("Create a new chat")
             .addStringOption(option => option
                 .setName("prompt")
-                .setDescription("Set the prompt to customize the bot")))
+                .setDescription("Set the prompt to customize the bot"))
+        )
         .addSubcommand(subcommand => subcommand
             .setName("delete")
-            .setDescription("Delete current chat")),
+            .setDescription("Delete current chat")
+        )
+        .setDefaultMemberPermissions(PermissionFlagsBits.SendMessagesInThreads)
+        .setDMPermission(false),
     async execute(client, interaction) {
+        let guildObj;
+
+        try {
+            guildObj = await readGuild(interaction.guild.id);
+            if (!guildObj.chatChannelID) {
+                await await interaction.reply("Please config the chat channel first using </config chat:1114085752410738749> command.");
+                return;
+            }
+        } catch (error) {
+            await await interaction.reply("Please config the chat channel first using </config chat:1114085752410738749> command.");
+            return;
+        }
+
         switch (interaction.options.getSubcommand()) {
             case "create": {
                 await interaction.reply("Creating new chat ...");
 
-                const channel = client.channels.cache.get((process.env.DEV ? process.env.DEV_CHAT_CHANNEL : process.env.CHAT_CHANNEL));
+                const channel = client.channels.cache.get(guildObj.chatChannelID);
                 const thread = await channel.threads.create({
                     name: "New Chat",
                     message: {
@@ -72,19 +90,16 @@ export default {
                 break;
             }
             case "delete": {
-                if ((interaction.channel.type === ChannelType.PublicThread && interaction.channel.parent?.type === ChannelType.GuildForum) && interaction.channel.parentId === (process.env.DEV ? process.env.DEV_CHAT_CHANNEL : process.env.CHAT_CHANNEL)) {
+                if ((interaction.channel.type === ChannelType.PublicThread && interaction.channel.parent?.type === ChannelType.GuildForum) && interaction.channel.parentId === (guildObj.chatChannelID)) {
                     await interaction.reply("Deleting current chat ...");
                     await deleteChat(interaction.channel.id);
                     await interaction.channel.delete();
                 }
                 else {
-                    interaction.reply("Please enter the chat you want to delete!");
+                    await interaction.reply("Please enter the chat you want to delete!");
                 }
                 break;
             }
-            default:
-                break;
         }
-
     }
 };
