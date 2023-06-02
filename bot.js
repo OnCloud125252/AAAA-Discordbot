@@ -53,10 +53,10 @@ for (const file of commandFiles) {
     }
 }
 
-client.on("interactionCreate", interaction => InteractionCreateHandler(client, interaction));
-client.on("messageCreate", message => MessageCreateHandler(message));
-client.on("channelDelete", channel => ChannelDeleteHandler(channel));
-client.on("threadDelete", thread => ThreadDeleteHanhler(thread));
+client.on("interactionCreate", async interaction => await InteractionCreateHandler(client, interaction));
+client.on("messageCreate", async message => await MessageCreateHandler(message));
+client.on("channelDelete", async channel => await ChannelDeleteHandler(channel));
+client.on("threadDelete", async thread => await ThreadDeleteHanhler(thread));
 
 client.on("ready", async () => {
     mongoose.set("strictQuery", false);

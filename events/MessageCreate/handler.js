@@ -2,10 +2,19 @@ import { ChannelType } from "discord.js";
 
 import chat from "./services/chat.js";
 import warning from "./services/warning.js";
+import readGuild from "../../_modules/MongoDB/functions/guild/read.js";
 
 
-export default function MessageCreateHandler(message) {
+export default async function MessageCreateHandler(message) {
     if (message.author.bot) return;
+
+    let guildObj;
+
+    try {
+        guildObj = await readGuild(message.guild.id);
+    } catch (error) {
+        return;
+    }
 
     const content = message.content;
 
@@ -15,7 +24,7 @@ export default function MessageCreateHandler(message) {
             break;
         }
 
-        case ((message.channel.type === ChannelType.PublicThread && message.channel.parent?.type === ChannelType.GuildForum) && message.channel.parentId === (process.env.DEV ? process.env.DEV_CHAT_CHANNEL : process.env.CHAT_CHANNEL)): {
+        case ((message.channel.type === ChannelType.PublicThread && message.channel.parent?.type === ChannelType.GuildForum) && message.channel.parentId === (guildObj.chatChannelID)): {
             chat(message);
             break;
         }
