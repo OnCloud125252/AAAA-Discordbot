@@ -1,4 +1,4 @@
-import { schema_chat } from "./_schema.js";
+import { schema_chat } from "../_schema.js";
 
 
 export default async function readChat(chatID) {

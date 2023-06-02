@@ -1,6 +1,6 @@
 import requestChat from "../../../_modules/ChatGPT/index.js";
-import readChat from "../../../_modules/MongoDB/functions/readChat.js";
-import updateChat from "../../../_modules/MongoDB/functions/updateChat.js";
+import readChat from "../../../_modules/MongoDB/functions/chat/read.js";
+import updateChat from "../../../_modules/MongoDB/functions/chat/update.js";
 
 
 export default async function chat(message) {

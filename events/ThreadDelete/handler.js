@@ -1,4 +1,4 @@
-import deleteChat from "../../_modules/MongoDB/functions/deleteChat.js";
+import deleteChat from "../../_modules/MongoDB/functions/chat/delete.js";
 
 
 export default async function ThreadDeleteHanhler(thread) {
