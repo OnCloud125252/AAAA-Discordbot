@@ -80,7 +80,7 @@ client.on("ready", async () => {
             status: "online",  // online, idle, dnd, invisible
 
             activities: [{
-                name: `/help | ${client.ws.ping}ms | V${packageJSON.version}`,
+                name: `/help | ${client.ws.ping}ms | Serving in ${client.guilds.cache.size} servers | V${packageJSON.version}`,
                 type: ActivityType.Listening
             }],
         });
