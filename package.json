@@ -17,6 +17,7 @@
         "eslint": "^8.30.0"
     },
     "dependencies": {
+        "@dqbd/tiktoken": "^1.0.7",
         "axios": "^1.2.1",
         "cheerio": "^1.0.0-rc.12",
         "discord.js": "^14.11.0",
