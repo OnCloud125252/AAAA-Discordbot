@@ -27,7 +27,16 @@ export default async function requestChat(messages) {
         return response.data;
     }
     catch (error) {
-        console.log(error);
-        return null;
+        if (error?.response?.status === 400 && error?.response?.data?.error?.code === "context_length_exceeded") {
+            console.log(messages);
+            console.log(error?.response?.data?.error);
+            return {
+                error: ""
+            };
+        }
+        else {
+            console.error(error);
+            throw new Error("An error occurred while requesting ChatGPT API");
+        }
     }
 }

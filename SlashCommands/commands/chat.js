@@ -89,13 +89,13 @@ export default {
                     };
                     const oldMessage = (await updateChat(newChatID, null, [chatSetup])).messages;
 
-                    const gptReply = (await requestChat(oldMessage)).choices[0].message;
-                    await updateChat(newChatID, null, [gptReply]);
-                    await client.channels.cache.get(newChatID).send(gptReply.content);
+                    const aiReply = (await requestChat(oldMessage)).choices[0].message;
+                    await updateChat(newChatID, null, [aiReply]);
+                    await client.channels.cache.get(newChatID).send(aiReply.content);
 
                     await interaction.editReply(`Successfully created new chat at <#${newChatID}>.`);
                 } catch (error) {
-                    console.log(error);
+                    console.error(error);
                     client.channels.cache.get(newChatID).delete();
                     await interaction.reply("Can't create new chat, please try again later.");
                 }

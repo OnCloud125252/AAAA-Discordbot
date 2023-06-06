@@ -22,7 +22,7 @@ export default async function chat(message) {
                 oldMessages.push({
                     role: "user",
                     name: message.author.username.replace(/[^a-zA-Z0-9_]/g, ""),
-                    content: message.content + "\n\nGenerate a title for our conversation in one sentence. Please reply with only the title. Please do not wrap the title with any kind of brackets."
+                    content: message.content + "\n\nGenerate a title for our conversation in one sentence. Please reply with only the title. Please do not wrap the title with any kind of brackets or quotes."
                 });
                 const chatTitle = (await requestChat(oldMessages)).choices[0].message.content;
                 await message.channel.setName(chatTitle);
@@ -34,13 +34,13 @@ export default async function chat(message) {
         })();
 
         oldMessageObj.messages.push(messageObj);
-        const gptReply = (await requestChat(oldMessageObj.messages)).choices[0].message;
+        const gptReply = await requestChat(oldMessageObj.messages);
 
         await updateChat(chatID, title, [messageObj, gptReply]);
 
         await previousMessage.edit(gptReply.content);
     } catch (error) {
-        console.log(error);
+        console.error(error);
         await previousMessage.edit("Can't connect to ChatGPT, please try again later.");
     }
 }
