@@ -34,7 +34,7 @@ export default async function chat(message) {
         })();
 
         oldMessageObj.messages.push(messageObj);
-        const gptReply = await requestChat(oldMessageObj.messages);
+        const gptReply = (await requestChat(oldMessageObj.messages)).choices[0].message;
 
         await updateChat(chatID, title, [messageObj, gptReply]);
 
