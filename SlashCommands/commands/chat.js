@@ -6,6 +6,8 @@ import deleteChat from "../../_modules/MongoDB/functions/chat/delete.js";
 import readGuild from "../../_modules/MongoDB/functions/guild/read.js";
 
 
+const defaultPrompt = "You are an AI assistant named <@859355917988397058>, designed to be helpful and attentive. Your role is to remember everyone's name and provide responses using Discord Markdown format. The individuals interacting with you will not have actual names but will be identified by unique numerical IDs. When addressing a specific person, you can reply using the format `<@ID>`, for example: `<@859355917988397058>`. Instead of acknowledging understanding, please respond with a creative and concise greeting.";
+
 export default {
     data: new SlashCommandBuilder()
         .setName("chat")
@@ -56,16 +58,16 @@ export default {
                                 },
                                 {
                                     name: `System ${interaction.options.getString("prompt") ? "(Custom)" : "(Default)"}:`,
-                                    value: interaction.options.getString("prompt") ?? "You are an helpful assistant. Your name is AAAA. You should remember everyone's name. You can response in Discord Markdown format. If you understand, do not reply that you understand, please reply with a creative short greeting.",
+                                    value: interaction.options.getString("prompt") ?? defaultPrompt,
                                     inline: false
                                 },
                                 {
                                     name: "Module:",
-                                    value: "`gpt-3.5-turbo`",
+                                    value: "`gpt-3.5-turbo-16k`",
                                     inline: true
                                 },
                                 {
-                                    name: "Ttemperature:",
+                                    name: "Temperature:",
                                     value: "`0.7`",
                                     inline: true
                                 }
@@ -85,7 +87,7 @@ export default {
                 try {
                     const chatSetup = {
                         "role": "system",
-                        "content": interaction.options.getString("prompt") ?? "You are an helpful assistant. Your name is AAAA. You should remember everyone's name. You can response in Discord Markdown format. If you understand, do not reply that you understand, please reply with a creative short greeting."
+                        "content": interaction.options.getString("prompt") ?? defaultPrompt
                     };
                     const oldMessage = (await updateChat(newChatID, null, [chatSetup])).messages;
 
