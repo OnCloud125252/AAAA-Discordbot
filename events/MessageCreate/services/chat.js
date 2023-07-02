@@ -12,7 +12,7 @@ export default async function chat(message) {
 
         const messageObj = {
             role: "user",
-            name: message.author.username.replace(/[^a-zA-Z0-9_]/g, ""),
+            name: message.author.id,
             content: message.content
         };
 
@@ -21,7 +21,7 @@ export default async function chat(message) {
                 const oldMessages = JSON.parse(JSON.stringify(oldMessageObj.messages));
                 oldMessages.push({
                     role: "user",
-                    name: message.author.username.replace(/[^a-zA-Z0-9_]/g, ""),
+                    name: message.author.id,
                     content: message.content + "\n\nGenerate a title for our conversation in one sentence. Please reply with only the title. Please do not wrap the title with any kind of brackets or quotes."
                 });
                 const chatTitle = (await requestChat(oldMessages)).choices[0].message.content;
