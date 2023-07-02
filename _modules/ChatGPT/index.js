@@ -15,8 +15,8 @@ export default async function requestChat(messages) {
             "Accept-Encoding": "gzip,deflate,compress"
         },
         data: {
-            "model": "gpt-3.5-turbo",
-            "max_tokens": 1000,
+            "model": "gpt-3.5-turbo-16k",
+            "max_tokens": 1500,
             "temperature": 0.7,
             "messages": messages
         }
