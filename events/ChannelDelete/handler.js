@@ -1,6 +1,6 @@
 export default async function ChannelDeleteHandler() {
-    switch (true) {
-        default:
-            break;
-    }
+  switch (true) {
+    default:
+      break;
+  }
 }

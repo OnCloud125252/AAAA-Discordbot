@@ -1,29 +1,33 @@
 {
-    "type": "module",
-    "name": "aaaa-discordbot",
-    "version": "4.9.5",
-    "description": "",
-    "main": "bot.js",
-    "scripts": {
-        "start": "node bot.js",
-        "unregister": "node SlashCommands/unRegister.js",
-        "register": "node register.js",
-        "lint": " npx eslint ./",
-        "lintfix": " npx eslint ./ --fix"
-    },
-    "author": "",
-    "license": "ISC",
-    "devDependencies": {
-        "eslint": "^8.30.0"
-    },
-    "dependencies": {
-        "@dqbd/tiktoken": "^1.0.7",
-        "axios": "^1.2.1",
-        "cheerio": "^1.0.0-rc.12",
-        "discord.js": "^14.11.0",
-        "dotenv": "^16.0.3",
-        "express": "^4.18.2",
-        "fs": "^0.0.1-security",
-        "mongoose": "^6.8.1"
-    }
+  "type": "module",
+  "name": "aaaa-discordbot",
+  "version": "4.9.5",
+  "description": "",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js",
+    "unregister": "node SlashCommands/unRegister.js",
+    "register": "node register.js",
+    "lint": " npx eslint ./",
+    "lintfix": " npx eslint ./ --fix"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-prettier": "4.0.0",
+    "prettier": "2.8.8",
+    "prettier-eslint": "^16.3.0"
+  },
+  "dependencies": {
+    "@dqbd/tiktoken": "^1.0.7",
+    "axios": "^1.2.1",
+    "cheerio": "^1.0.0-rc.12",
+    "discord.js": "^14.11.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
+    "mongoose": "^6.8.1"
+  }
 }
