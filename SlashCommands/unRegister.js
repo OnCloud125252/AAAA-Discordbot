@@ -1,30 +1,32 @@
 import { REST, Routes } from "discord.js";
 import * as dotenv from "dotenv";
 
+import isDevEnvironment from "../_modules/isDevEnvironment/index.js";
+
 
 dotenv.config();
 
-if (!(process.env.DEV ? process.env.DEV_BOT_TOKEN : process.env.BOT_TOKEN))
+if (!(isDevEnvironment ? process.env.DEV_BOT_TOKEN : process.env.BOT_TOKEN))
   throw Error(
     "unRegisterSlashCommands : \"BOT_TOKEN\" not found in environment variable"
   );
-if (!(process.env.DEV ? process.env.DEV_CLIENT_ID : process.env.CLIENT_ID))
+if (!(isDevEnvironment ? process.env.DEV_CLIENT_ID : process.env.CLIENT_ID))
   throw Error(
     "unRegisterSlashCommands : \"CLIENT_ID\" not found in environment variable"
   );
-if (!(process.env.DEV ? process.env.DEV_GUILD_ID : process.env.GUILD_ID))
+if (!(isDevEnvironment ? process.env.DEV_GUILD_ID : process.env.GUILD_ID))
   throw Error(
     "unRegisterSlashCommands : \"GUILD_ID\" not found in environment variable"
   );
 
-const BOT_TOKEN = process.env.DEV
+const BOT_TOKEN = isDevEnvironment
   ? process.env.DEV_BOT_TOKEN
   : process.env.BOT_TOKEN;
-const CLIENT_ID = process.env.DEV
+const CLIENT_ID = isDevEnvironment
   ? process.env.DEV_CLIENT_ID
   : process.env.CLIENT_ID;
 const GUILD_ID =
-  (process.env.DEV ? process.env.DEV_GUILD_ID : process.env.GUILD_ID) || null;
+  (isDevEnvironment ? process.env.DEV_GUILD_ID : process.env.GUILD_ID) || null;
 
 const rest = new REST({ version: "10" }).setToken(BOT_TOKEN);
 

@@ -14,6 +14,7 @@ import * as dotenv from "dotenv";
 
 import registerSlashCommands from "./SlashCommands/register.js";
 import readableTime from "./_modules/readableTime/index.js";
+import isDevEnvironment from "./_modules/isDevEnvironment/index.js";
 import InteractionCreateHandler from "./events/InteractionCreate/handler.js";
 import MessageCreateHandler from "./events/MessageCreate/handler.js";
 import ChannelDeleteHandler from "./events/ChannelDelete/handler.js";
@@ -27,15 +28,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const server = express();
 const host =
-  (process.env.DEV ? process.env.DEV_HOST : process.env.HOST) || "localhost";
+  (isDevEnvironment ? process.env.DEV_HOST : process.env.HOST) || "localhost";
 const port =
-  (process.env.DEV ? process.env.DEV_PORT : process.env.PORT) || 3000;
+  (isDevEnvironment ? process.env.DEV_PORT : process.env.PORT) || 3000;
 
 const packageJSON = JSON.parse(readFileSync("./package.json"));
 
-if (!(process.env.DEV ? process.env.DEV_BOT_TOKEN : process.env.BOT_TOKEN))
+if (!(isDevEnvironment ? process.env.DEV_BOT_TOKEN : process.env.BOT_TOKEN))
   throw Error("Server : \"BOT_TOKEN\" not found in environment variable");
-const BOT_TOKEN = process.env.DEV
+const BOT_TOKEN = isDevEnvironment 
   ? process.env.DEV_BOT_TOKEN
   : process.env.BOT_TOKEN;
 
@@ -91,7 +92,7 @@ export const client = new Client({
   client.on("ready", async () => {
     mongoose.set("strictQuery", false);
     const db = await mongoose.connect(
-      process.env.DEV ? process.env.DEV_MONGO_URI : process.env.MONGO_URI,
+      isDevEnvironment ? process.env.DEV_MONGO_URI : process.env.MONGO_URI,
       { keepAlive: true }
     );
     console.log(

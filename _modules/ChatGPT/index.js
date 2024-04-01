@@ -1,8 +1,12 @@
 import axios from "axios";
 
+import isDevEnvironment from "../isDevEnvironment/index.js";
+
 
 const openAi = "https://api.openai.com/v1/chat/completions";
-const openAiKey = (process.env.DEV ? process.env.DEV_OPEN_AI_KEY : process.env.OPEN_AI_KEY);
+const openAiKey = isDevEnvironment
+  ? process.env.DEV_OPEN_AI_KEY
+  : process.env.OPEN_AI_KEY;
 
 export default async function requestChat(messages) {
   const config = {
@@ -11,14 +15,14 @@ export default async function requestChat(messages) {
     url: openAi,
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${openAiKey}`,
+      Authorization: `Bearer ${openAiKey}`,
       "Accept-Encoding": "gzip,deflate,compress"
     },
     data: {
-      "model": "gpt-3.5-turbo-16k",
-      "max_tokens": 1500,
-      "temperature": 0.7,
-      "messages": messages
+      model: "gpt-3.5-turbo-16k",
+      max_tokens: 1500,
+      temperature: 0.7,
+      messages: messages
     }
   };
 
@@ -27,7 +31,10 @@ export default async function requestChat(messages) {
     return response.data;
   }
   catch (error) {
-    if (error?.response?.status === 400 && error?.response?.data?.error?.code === "context_length_exceeded") {
+    if (
+      error?.response?.status === 400 &&
+      error?.response?.data?.error?.code === "context_length_exceeded"
+    ) {
       console.log(messages);
       console.log(error?.response?.data?.error);
       return {

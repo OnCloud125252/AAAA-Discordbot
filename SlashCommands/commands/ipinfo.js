@@ -1,6 +1,8 @@
 import { SlashCommandBuilder } from "discord.js";
 import axios from "axios";
 
+import isDevEnvironment from "../../_modules/isDevEnvironment/index.js";
+
 
 export default {
   data: new SlashCommandBuilder()
@@ -38,7 +40,7 @@ export default {
 
       const ipinfoResponse = await axios.get(`https://ipinfo.io/${ipAddress}`, {
         params: {
-          token: process.env.DEV
+          token: isDevEnvironment
             ? process.env.DEV_IPINFO_TOKEN
             : process.env.IPINFO_TOKEN
         }
@@ -72,7 +74,7 @@ export default {
               marker: `center:${ipinfoResponse.data.loc}|icon:https://i.ibb.co/GF7SFHj/map-marker-128.png|shadow:false`
             },
             headers: {
-              "X-RapidAPI-Key": process.env.DEV
+              "X-RapidAPI-Key": isDevEnvironment
                 ? process.env.DEV_X_RapidAPI_Key
                 : process.env.X_RapidAPI_Key,
               "X-RapidAPI-Host": "maptoolkit.p.rapidapi.com"
